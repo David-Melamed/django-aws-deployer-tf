@@ -1,0 +1,63 @@
+name: Deploy Django Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      application_name:
+        description: 'The name of the application'
+        required: true
+      django_project_url:
+        description: 'The Git URL of the Django project'
+        required: true
+      db_name:
+        description: 'The name of the database'
+        required: true
+      db_username:
+        description: 'The database username'
+        required: true
+      db_password:
+        description: 'The database password'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecr.development.oicd.github.role
+          aws-region: us-east-1 
+          
+      - name: Download Django project
+        run: |
+          git clone ${{ github.event.inputs.git_url }} django_project
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.1.7"
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Apply Terraform configuration
+        run: |
+          terraform apply -auto-approve \
+            -var "app_name=${{ github.event.inputs.application_name }}" \
+            -var "django_project_url=${{ github.event.inputs.django_project_url }}" \
+            -var "db_username=${{ github.event.inputs.db_username }}" \
+            -var "db_password=${{ github.event.inputs.db_password }}"
+
+      - name: Apply Terraform configuration
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_app_name: ${{ github.event.inputs.application_name }}
+          TF_VAR_django_project_url: ${{ github.event.inputs.django_project_url }}
+          TF_VAR_db_name: ${{ github.event.inputs.db_name }}
+          TF_VAR_db_username: ${{ github.event.inputs.db_username }}
+          TF_VAR_db_password: ${{ github.event.inputs.db_password }}

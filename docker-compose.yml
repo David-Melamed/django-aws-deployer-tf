@@ -1,0 +1,31 @@
+services:
+  web:
+    image: "${APP_IMAGE_URI}:${APP_IMAGE_TAG}"
+    environment:
+      DJANGO_SETTINGS_MODULE: django_main.settings
+      DB_USER: "${DB_USER}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_HOST: "${DB_HOST}"
+      DB_NAME: "${DB_NAME}"
+      DB_PORT: "${DB_PORT}"
+    container_name: web
+    ports:
+      - "9090:9090"
+    volumes:
+      - type: bind
+        source: /var/app/current
+        target: /etc/django-static
+      - type: bind
+        source: /var/app/current/.platform/scripts/entrypoint.sh
+        target: /code/entrypoint.sh
+    command: ["/bin/sh", "./code/entrypoint.sh"]
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z ${DB_HOST} ${DB_PORT}"]
+      interval: 120s
+      timeout: 90s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "5"

@@ -1,7 +1,7 @@
 locals {
   env                = "dev"
   zone_name          = "swapapp.net"
-  app_version        = "3.0"
+  app_version        = "3.1"
   rds_instance_class = "db.t3.micro"
   db_host            = "rds-dev.swapapp.net"
   db_port            = "3306"
@@ -97,7 +97,6 @@ module "ecr" {
   image_tag           = local.app_version
   django_project_url  = var.django_project_url
   env                 = local.env
-  django_project_path = var.django_project_path
   image_platform      = local.image_platform
   ecr_region          = local.ecr_region
 }

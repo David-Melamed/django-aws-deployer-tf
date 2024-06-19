@@ -123,11 +123,5 @@ variable "app_name" {
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
-  default = "https://github.com/David-Melamed/SWAP-Web.git"
-}
-
-variable "django_project_path" {
-  description = "Django project directory if exists"
-  type        = string
-  default     = "SWAP/django_swap"
+  default = "https://github.com/samarth-p/College-ERP"
 }

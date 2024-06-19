@@ -1,14 +1,9 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9
 
-ARG django_project_url
-ARG django_project_path
-
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV DJANGO_PROJECT_URL $django_project_url
-ENV DJANGO_PROJECT_PATH $django_project_path
 
 
 # Install necessary dependencies
@@ -23,18 +18,24 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /code
 
-COPY django-app/SWAP-Web/SWAP/django_swap/requirements.txt /code/
+# Copy django project files
+COPY django-app/*/ .
+
+# List the contents of /code to verify
+RUN ls -la /code
 
 # Clone the repository
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY django-app/SWAP-Web/SWAP/django_swap/  /code/
-
 # Expose port 9090 for the Django app
 EXPOSE 9090
 
-# Define environment variables for Django settings
-ENV DJANGO_SETTINGS_MODULE=django_main.settings
+RUN export DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" | sed 's|/settings.py||' | xargs -n 1 basename) && \
+    echo "Detected Django project name: ${DJANGO_PROJECT_NAME}" && \
+    echo "export DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME}"
+    
+# Set environment variable for Django settings module
+ENV DJANGO_SETTINGS_MODULE=${DJANGO_PROJECT_NAME}.settings
 
 # Start the web_start.sh script
 ENTRYPOINT ["/bin/bash", "/code/entrypoint.sh"]

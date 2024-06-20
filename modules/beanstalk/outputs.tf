@@ -42,3 +42,7 @@ output "bucket_name" {
 output "environment_name" {
   value = aws_elastic_beanstalk_environment.ebslab_env.name
 }
+
+output "django_project_name" {
+  value = local.django_project_name
+}

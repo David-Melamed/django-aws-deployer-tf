@@ -123,5 +123,5 @@ variable "app_name" {
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
-  default = "https://github.com/samarth-p/College-ERP"
+  default = "https://github.com/David-Melamed/django-swap-app.git"
 }

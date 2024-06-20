@@ -2,7 +2,7 @@ services:
   web:
     image: "${APP_IMAGE_URI}:${APP_IMAGE_TAG}"
     environment:
-      DJANGO_SETTINGS_MODULE: django_main.settings
+      DJANGO_SETTINGS_MODULE: "${DJANGO_PROJECT_NAME}.settings"
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_HOST: "${DB_HOST}"

@@ -3,7 +3,7 @@ locals {
   zone_name          = "awsdjangodeployer.com"
   app_version        = "1"
   rds_instance_class = "db.t3.micro"
-  db_host            = "rds-dev.swapapp.net"
+  db_host            = "rds-${env}.${local.zone_name}"
   db_port            = "3306"
   image_platform     = "linux/amd64"
   ecr_region         = "us-east-1"

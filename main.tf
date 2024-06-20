@@ -1,7 +1,7 @@
 locals {
   env                = "dev"
-  zone_name          = "swapapp.net"
-  app_version        = "3.1"
+  zone_name          = "awsdjangodeployer.com"
+  app_version        = "1"
   rds_instance_class = "db.t3.micro"
   db_host            = "rds-dev.swapapp.net"
   db_port            = "3306"

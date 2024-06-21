@@ -10,6 +10,6 @@ output "ecr_repository_url" {
   value = module.ecr.ecr_repository_url
 }
 
-# output "cloudfront_distribution_id" {
-#     value = module.cloudfront.cloudfront_distribution_id
-# }
+output "web_url" {
+  value = "https://${module.route53_zone.zone_name}"
+}

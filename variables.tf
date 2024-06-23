@@ -128,5 +128,5 @@ variable "django_project_url" {
 variable "branch_name" {
   description = "Django project URL"
   type        = string
-  default     = "main"
+  default     = "master"
 }

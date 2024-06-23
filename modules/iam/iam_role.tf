@@ -1,7 +1,7 @@
 locals {
-  assume_ebs_role_policy = jsondecode(file(var.assume_role_policy_file))
-  assume_ebs_policy = jsondecode(file(var.assume_policy_file))
-  assume_ebs_ec2_role = jsondecode(file(var.assume_ebs_ec2_file))
+  assume_ebs_role_policy = jsondecode(file("${path.module}/json/iam_role_policy.json"))
+  assume_ebs_policy = jsondecode(file("${path.module}/json/iam_policy.json"))
+  assume_ebs_ec2_role = jsondecode(file("${path.module}/json/aws-elasticbeamstalk-ec2-role.json"))
 }
 
 resource "aws_iam_role" "ebslab_role" {

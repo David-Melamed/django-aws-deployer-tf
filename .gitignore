@@ -39,6 +39,4 @@ terraform.rc
 terraform.tfstate*
 .platform/ssh/id_rsa.pub
 *.zip
-secrets.json
 modules/secrets/credentials.json
-django-app/

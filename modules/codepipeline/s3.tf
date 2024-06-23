@@ -3,6 +3,8 @@ resource "aws_s3_object" "dockerfile" {
   key    = "Dockerfile"
   source = "Dockerfile"
   acl    = "public-read"
+
+  depends_on = [ aws_s3_bucket_acl.s3_bucket_acl, aws_s3_bucket_public_access_block.bucket_acl_configuration ]
 }
 
 # Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
@@ -13,7 +15,7 @@ resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "example" {
+resource "aws_s3_bucket_public_access_block" "bucket_acl_configuration" {
   bucket = var.beanstalk_bucket_id
 
   block_public_acls       = false

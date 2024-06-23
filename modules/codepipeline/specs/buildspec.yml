@@ -1,0 +1,40 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo Installing dependencies...
+      - apt-get update
+      - apt-get install -y python3-pip python3-venv
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - echo $ECR_REPO_URL
+      - aws ecr-public get-login-password --region $AWS_ECR_REGION | docker login --username AWS --password-stdin public.ecr.aws/$ECR_REPO_ID
+      - echo Cloning the Django repository...
+      - git clone $DJANGO_URL
+      - cd $(basename $DJANGO_URL .git)
+      - if [ -f requirements.txt ]; then pip install --upgrade pip && pip install -r requirements.txt; fi
+
+  build:
+    commands:
+      - echo Building the Docker image...
+      - echo "Downloading Dockerfile from S3"
+      - curl -o Dockerfile $DOCKERFILE_S3_URL
+      - docker build --platform linux/amd64 -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker images
+      - echo $IMAGE_REPO_NAME
+      - echo $IMAGE_TAG
+      - echo $ECR_REPO_URL
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ECR_REPO_URL/$IMAGE_REPO_NAME:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $ECR_REPO_URL/$IMAGE_REPO_NAME:$IMAGE_TAG
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes

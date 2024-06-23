@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /code
 
 # Copy django project files
-COPY django-app/*/ .
+COPY . .
 
 # List the contents of /code to verify
 RUN ls -la /code

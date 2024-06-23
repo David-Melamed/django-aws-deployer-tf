@@ -7,6 +7,16 @@ locals {
   db_port            = "3306"
   image_platform     = "linux/amd64"
   ecr_region         = "us-east-1"
+  repo_owner         = regex("https://github.com/([^/]+)/", var.django_project_url)[0]
+  repo_name          = regex("https://github.com/[^/]+/([^/]+).git", var.django_project_url)[0]
+}
+
+
+module "s3" {
+  source             = "./modules/s3"
+  bucket_name        = "${var.app_name}-${local.env}"
+  env                = local.env
+  beanstalk_app_name = var.app_name
 }
 
 module "vpc" {
@@ -30,18 +40,15 @@ module "sgs" {
 module "secrets" {
   source      = "./modules/secrets"
   kms_alias   = "${var.app_name}-${local.env}-kms-alias-new"
-  db_name     = "${var.app_name}_${local.env}"
+  db_name     = "${var.app_name}-${local.env}"
   db_username = var.db_username
   db_password = var.db_password
 }
 
 module "iam" {
-  source                  = "./modules/iam"
-  assume_role_policy_file = "./modules/iam/json/iam_role_policy.json"
-  assume_policy_file      = "./modules/iam/json/iam_policy.json"
-  assume_ebs_ec2_file     = "./modules/iam/json/aws-elasticbeamstalk-ec2-role.json"
-  kms_key_arn             = module.secrets.kms_key_arn
-  role_name               = "${var.app_name}-${local.env}-role"
+  source                               = "./modules/iam"
+  kms_key_arn                          = module.secrets.kms_key_arn
+  role_name                            = "${var.app_name}-${local.env}-role"
 }
 
 module "rds" {
@@ -101,6 +108,28 @@ module "ecr" {
   ecr_region          = local.ecr_region
 }
 
+module "codepipeline" { 
+  source              = "./modules/codepipeline"
+  app_name            = var.app_name
+  image_tag           = local.app_version
+  django_project_url  = var.django_project_url
+  env                 = local.env
+  image_platform      = local.image_platform
+  ecr_region          = local.ecr_region
+  pipeline_name       = "${var.app_name}-${local.env}"
+  pipeline_role_arn   = module.iam.pipeline_role_arn
+  s3_bucket_name      = "${var.app_name}-${local.env}"
+  stage_version       = local.app_version
+  codebuild_role_arn  = module.iam.codebuild_role_arn
+  ecr_repository_name = module.ecr.ecr_repository_name
+  app_version         = local.app_version
+  repo_owner          = local.repo_owner
+  repo_name           = local.repo_name
+  beanstalk_bucket_id = module.s3.beanstalk_bucket_id
+  ecr_repository_url  = module.ecr.ecr_repository_url
+  bucket_regional_domain_name = module.s3.bucket_regional_domain_name
+}
+
 module "beanstalk" {
   source                    = "./modules/beanstalk"
   ebs_app_name              = var.app_name
@@ -129,5 +158,8 @@ module "beanstalk" {
   django_project_url        = var.django_project_url
   image_uri                 = module.ecr.ecr_repository_url
   image_tag                 = local.app_version
-  ecr_readiness             = module.ecr.ecr_readiness
+  repo_owner                = local.repo_owner
+  repo_name                 = local.repo_name
+  beanstalk_bucket_id       = module.s3.beanstalk_bucket_id
+  branch_name               = var.branch_name
 }

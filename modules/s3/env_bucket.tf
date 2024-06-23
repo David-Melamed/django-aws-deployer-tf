@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "beanstalk_bucket" {
-  bucket = var.bucket_name
+  bucket = lower(var.bucket_name)
   object_lock_enabled = false
 
   tags = {

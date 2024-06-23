@@ -1,7 +1,7 @@
 variable "tags" {
   description = "Tags applied to all resources"
   type        = string
-  default     = "ebs-lab"
+  default     = "django-deployer"
 }
 
 variable "instance_tenancy" {
@@ -100,7 +100,6 @@ variable "ssh_public_key_local_path" {
   default     = "$HOME/.ssh/id_rsa.pub"
 }
 
-
 variable "db_username" {
   description = "Database username"
   type        = string
@@ -124,4 +123,10 @@ variable "django_project_url" {
   description = "Django project URL"
   type        = string
   default = "https://github.com/David-Melamed/django-swap-app.git"
+}
+
+variable "branch_name" {
+  description = "Django project URL"
+  type        = string
+  default     = "master"
 }

@@ -31,4 +31,7 @@ variable "alb_sg_id" {}
 variable "django_project_url" {}
 variable "image_uri" {}
 variable "image_tag" {}
-variable "ecr_readiness" {}
+variable "repo_owner" {}
+variable "repo_name" {}
+variable "beanstalk_bucket_id" {}
+variable "branch_name" {}

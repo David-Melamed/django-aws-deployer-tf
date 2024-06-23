@@ -97,7 +97,7 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
   setting {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "DB_NAME"
-    value     = var.db_name
+    value     = local.db_name
   }
 
   setting {
@@ -154,9 +154,9 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
   
   depends_on = [ 
     var.ssl_certificate_arn,
-    var.ecr_readiness,
-    null_resource.get_django_project_name
-   ]
+    data.external.get_django_project_name,
+    local.django_project_name
+    ]
 }
 
 resource "aws_iam_instance_profile" "instance_profile" {
@@ -164,25 +164,11 @@ resource "aws_iam_instance_profile" "instance_profile" {
   role = var.service_role_name
 }
 
-resource "null_resource" "get_django_project_name" {
-  provisioner "local-exec" {
-    command = <<EOT
-    ${path.module}/scripts/find_django_project.sh ${local.django_app_path} > ${local.django_app_path}/project_name.txt
-    EOT
-  }
-  
-  triggers = {
-    app_version   = aws_elastic_beanstalk_application_version.app_version.name
-    django_app_url = var.django_project_url
-  }
-}
-
-data "local_file" "django_project_name" {
-  depends_on = [null_resource.get_django_project_name]
-  filename   = "${local.django_app_path}/project_name.txt"
+data "external" "get_django_project_name" {
+  program = ["${path.module}/scripts/find_django_project.py", var.repo_owner, var.repo_name, var.branch_name]
 }
 
 locals {
-  django_project_name = trimspace(data.local_file.django_project_name.content)
-  django_app_path = "${path.root}/django-app"
+  django_project_name = data.external.get_django_project_name.result.project_name
+  db_name = replace(var.db_name,"-","_")
 }

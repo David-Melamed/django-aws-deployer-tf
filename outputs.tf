@@ -13,3 +13,19 @@ output "ecr_repository_url" {
 output "web_url" {
   value = "https://${module.route53_zone.zone_name}"
 }
+
+output "repo_owner" {
+  value = local.repo_owner
+}
+
+output "project_name" {
+  value = local.repo_name
+}
+
+output "ecr_repository_id" {
+  value = module.codepipeline.ecr_repository_id
+}
+
+output "ecr_repository_dns" {
+  value = module.codepipeline.ecr_repository_dns
+}

@@ -1,0 +1,26 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "codestar-connections:UseConnection",
+                "codepipeline:CreatePipeline",
+                "codepipeline:UpdatePipeline",
+                "codepipeline:GetPipeline",
+                "codepipeline:StartPipelineExecution",
+                "codepipeline:ListPipelines",
+                "codepipeline:GetPipelineState",
+                "codepipeline:GetPipelineExecution",
+                "codepipeline:GetActionType",
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild",
+                "codebuild:StopBuild",
+                "codebuild:BatchGetProjects",
+                "codebuild:ListBuildsForProject",
+                "codebuild:BatchGetReports"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

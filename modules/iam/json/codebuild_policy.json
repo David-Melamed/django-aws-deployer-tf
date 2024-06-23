@@ -1,0 +1,22 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:*",
+        "s3:*",
+        "codepipeline:*",
+        "ecr:*",
+        "ecs:*",
+        "cloudwatch:*",
+        "ssm:GetParameters"
+        ],
+      "Resource": "*"
+    },
+    { "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "*"
+    }
+  ]
+}

@@ -1,18 +1,19 @@
+
 output "ebs_environment_url" {
-  value = aws_elastic_beanstalk_environment.ebslab_env.endpoint_url
+  value = var.image_build_status && length(aws_elastic_beanstalk_environment.ebslab_env) > 0 ? aws_elastic_beanstalk_environment.ebslab_env[0].endpoint_url : ""
 }
 
 output "ebs_app_name" {
-  value = aws_elastic_beanstalk_application.ebslab_app.name
+  value = var.image_build_status && length(aws_elastic_beanstalk_application.ebslab_app) > 0 ? aws_elastic_beanstalk_application.ebslab_app[0].name : ""
 }
 
 output "instance_private_ips" {
-  value = aws_elastic_beanstalk_environment.ebslab_env.instances
+  value = var.image_build_status && length(aws_elastic_beanstalk_environment.ebslab_env) > 0 ? aws_elastic_beanstalk_environment.ebslab_env[0].instances : []
   sensitive = true
 }
 
 output "env" {
-  value = aws_elastic_beanstalk_environment.ebslab_env.name
+  value = var.image_build_status && length(aws_elastic_beanstalk_environment.ebslab_env) > 0 ? aws_elastic_beanstalk_environment.ebslab_env[0].name : ""
 }
 
 output "beanstalk_cname_prefix" {
@@ -40,7 +41,7 @@ output "bucket_name" {
 }
 
 output "environment_name" {
-  value = aws_elastic_beanstalk_environment.ebslab_env.name
+  value = var.image_build_status && length(aws_elastic_beanstalk_environment.ebslab_env) > 0 ? aws_elastic_beanstalk_environment.ebslab_env[0].name : ""
 }
 
 output "django_project_name" {

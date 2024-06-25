@@ -35,3 +35,4 @@ variable "repo_owner" {}
 variable "repo_name" {}
 variable "beanstalk_bucket_id" {}
 variable "branch_name" {}
+variable "image_build_status" {}

@@ -162,4 +162,5 @@ module "beanstalk" {
   repo_name                 = local.repo_name
   beanstalk_bucket_id       = module.s3.beanstalk_bucket_id
   branch_name               = var.branch_name
+  image_build_status        = module.codepipeline.image_build_status
 }

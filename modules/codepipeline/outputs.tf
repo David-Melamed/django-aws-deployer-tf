@@ -8,3 +8,7 @@ output "ecr_repository_dns" {
 output "ecr_repository_id" {
   value = local.ecr_repository_id
 }
+
+output "image_build_status" {
+  value = var.image_build_status
+}

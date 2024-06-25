@@ -4,7 +4,7 @@ resource "aws_s3_object" "dockerfile" {
   source = "Dockerfile"
   acl    = "public-read"
 
-  depends_on = [ aws_s3_bucket_acl.s3_bucket_acl, aws_s3_bucket_public_access_block.bucket_acl_configuration ]
+  depends_on = [ aws_s3_bucket_acl.s3_bucket_acl, aws_s3_bucket_public_access_block.bucket_acl_configuration, aws_s3_bucket_policy.public_access_policy ]
 }
 
 # Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
@@ -13,6 +13,8 @@ resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   rule {
     object_ownership = "ObjectWriter"
   }
+  
+  depends_on = [aws_s3_bucket_public_access_block.bucket_acl_configuration]
 }
 
 resource "aws_s3_bucket_public_access_block" "bucket_acl_configuration" {

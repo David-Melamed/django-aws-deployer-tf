@@ -16,3 +16,9 @@ variable "repo_name" {}
 variable "beanstalk_bucket_id" {}
 variable "ecr_repository_url" {}
 variable "bucket_regional_domain_name" {}
+
+variable "image_build_status" {
+  description = "Flag to deploy Elastic Beanstalk environment"
+  type        = bool
+  default     = true
+}   

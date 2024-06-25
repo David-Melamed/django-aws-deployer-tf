@@ -1,6 +1,7 @@
 resource "aws_elastic_beanstalk_environment" "ebslab_env" {
+  count = var.image_build_status ? 1 : 0
   name = format("%s-%s", var.ebs_app_name, var.env)
-  application = aws_elastic_beanstalk_application.ebslab_app.name
+  application = var.image_build_status ? aws_elastic_beanstalk_application.ebslab_app[0].name : ""
   solution_stack_name = var.solution_stack_name
   version_label = "${aws_elastic_beanstalk_application_version.app_version.name}"
   
@@ -155,7 +156,8 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
   depends_on = [ 
     var.ssl_certificate_arn,
     data.external.get_django_project_name,
-    local.django_project_name
+    local.django_project_name,
+    var.image_build_status
     ]
 }
 

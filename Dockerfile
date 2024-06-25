@@ -30,12 +30,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Expose port 9090 for the Django app
 EXPOSE 9090
 
-RUN export DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" | sed 's|/settings.py||' | xargs -n 1 basename) && \
-    echo "Detected Django project name: ${DJANGO_PROJECT_NAME}" && \
-    echo "export DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME}"
-    
-# Set environment variable for Django settings module
-ENV DJANGO_SETTINGS_MODULE=${DJANGO_PROJECT_NAME}.settings
-
 # Start the web_start.sh script
 ENTRYPOINT ["/bin/bash", "/code/entrypoint.sh"]

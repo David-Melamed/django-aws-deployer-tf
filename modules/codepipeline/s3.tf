@@ -4,17 +4,21 @@ resource "aws_s3_object" "dockerfile" {
   source = "Dockerfile"
   acl    = "public-read"
 
-  depends_on = [ aws_s3_bucket_acl.s3_bucket_acl, aws_s3_bucket_public_access_block.bucket_acl_configuration, aws_s3_bucket_policy.public_access_policy ]
+  depends_on = [
+    aws_s3_bucket_acl.s3_bucket_acl, 
+    aws_s3_bucket_public_access_block.bucket_acl_configuration
+  ]
 }
 
-# Resource to avoid error "AccessControlListNotSupported: The bucket does not allow ACLs"
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   bucket = var.beanstalk_bucket_id
   rule {
     object_ownership = "ObjectWriter"
   }
-  
-  depends_on = [aws_s3_bucket_public_access_block.bucket_acl_configuration]
+
+  depends_on = [
+    aws_s3_bucket_public_access_block.bucket_acl_configuration
+  ]
 }
 
 resource "aws_s3_bucket_public_access_block" "bucket_acl_configuration" {
@@ -29,7 +33,14 @@ resource "aws_s3_bucket_public_access_block" "bucket_acl_configuration" {
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
   bucket = var.beanstalk_bucket_id
   acl    = "public-read"
-  depends_on = [aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership]
+  
+  depends_on = [
+    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership
+  ]
+}
+
+data "aws_s3_bucket" "this" {
+  bucket = var.beanstalk_bucket_id
 }
 
 resource "aws_s3_bucket_policy" "public_access_policy" {
@@ -42,9 +53,12 @@ resource "aws_s3_bucket_policy" "public_access_policy" {
         Effect = "Allow",
         Principal = "*",
         Action = "s3:GetObject",
-        Resource = "arn:aws:s3:::${var.beanstalk_bucket_id}/Dockerfile"
+        Resource = "arn:aws:s3:::${data.aws_s3_bucket.this.id}/Dockerfile"
       }
     ]
   })
-}
 
+  depends_on = [
+    aws_s3_object.dockerfile
+  ]
+}

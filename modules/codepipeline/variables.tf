@@ -21,4 +21,6 @@ variable "image_build_status" {
   description = "Flag to deploy Elastic Beanstalk environment"
   type        = bool
   default     = true
-}   
+}
+variable "docker_username" {}
+variable "docker_password" {}

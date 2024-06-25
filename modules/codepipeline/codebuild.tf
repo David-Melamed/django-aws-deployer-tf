@@ -81,6 +81,14 @@ resource "aws_codebuild_project" "build_project" {
         name = "DOCKERFILE_S3_URL"
         value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.dockerfile.key}"
     }
+    environment_variable {
+        name = "DOCKER_USERNAME"
+        value = var.docker_username
+    }
+    environment_variable {
+        name = "DOCKER_PASSWORD"
+        value = var.docker_password
+    }
   }
 }
 

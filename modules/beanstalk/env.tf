@@ -141,7 +141,13 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
     namespace = "aws:elasticbeanstalk:application:environment"
     name      = "DJANGO_PROJECT_NAME"
     value     = "${local.django_project_name}"
-  }  
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "ROUTE53_DOMAIN"
+    value     = "https://${var.zone_name}" 
+  }
 
   setting {
     namespace = "aws:autoscaling:asg"

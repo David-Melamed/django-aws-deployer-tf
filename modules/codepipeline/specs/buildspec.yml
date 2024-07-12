@@ -17,14 +17,14 @@ phases:
       - echo Cloning the Django repository...
       - git clone $DJANGO_URL
       - cd $(basename $DJANGO_URL .git)
-      - if [ -f requirements.txt ]; then pip install --upgrade pip && pip install -r requirements.txt; fi
-
   build:
     commands:
       - echo Building the Docker image...
       - echo "Downloading Dockerfile from S3"
       - curl -o Dockerfile $DOCKERFILE_S3_URL
-      - docker build --platform linux/amd64 -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - echo $OVERRIDE_SETTINGS_URL
+      - echo $CUSTOM_SETTINGS_URL
+      - docker build --platform linux/amd64 -t $IMAGE_REPO_NAME:$IMAGE_TAG . --build-arg OVERRIDE_SETTINGS_URL=$OVERRIDE_SETTINGS_URL --build-arg CUSTOM_SETTINGS_URL=$CUSTOM_SETTINGS_URL
       - docker images
       - echo $IMAGE_REPO_NAME
       - echo $IMAGE_TAG

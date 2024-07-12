@@ -1,10 +1,4 @@
 resource "aws_codebuild_project" "validate_source" {
-  depends_on = [ 
-    aws_s3_bucket_policy.public_access_policy,
-    aws_s3_bucket_acl.s3_bucket_acl,
-    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership 
-  ]
-
   name          = "${var.pipeline_name}-validate-source"
   service_role  = var.codebuild_role_arn
 
@@ -24,13 +18,7 @@ resource "aws_codebuild_project" "validate_source" {
   }
 }
 
-resource "aws_codebuild_project" "build_project" {
-  depends_on = [ 
-    aws_s3_bucket_policy.public_access_policy,
-    aws_s3_bucket_acl.s3_bucket_acl,
-    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership 
-  ]
-  
+resource "aws_codebuild_project" "build_project" {  
   name          = "${var.pipeline_name}-build-source"
   service_role  = var.codebuild_role_arn  
   
@@ -89,6 +77,14 @@ resource "aws_codebuild_project" "build_project" {
         name = "DOCKER_PASSWORD"
         value = var.docker_password
     }
+    environment_variable {
+        name = "OVERRIDE_SETTINGS_URL"
+        value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.override_settings.key}"
+    } 
+    environment_variable {
+        name = "CUSTOM_SETTINGS_URL"
+        value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.custom_settings.key}"
+    } 
   }
 }
 

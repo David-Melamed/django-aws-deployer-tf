@@ -2,12 +2,13 @@ services:
   web:
     image: "${APP_IMAGE_URI}:${APP_IMAGE_TAG}"
     environment:
-      DJANGO_SETTINGS_MODULE: "${DJANGO_PROJECT_NAME}.settings"
+      DJANGO_SETTINGS_MODULE: "${DJANGO_PROJECT_NAME}.custom_settings"
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_HOST: "${DB_HOST}"
       DB_NAME: "${DB_NAME}"
       DB_PORT: "${DB_PORT}"
+      ROUTE53_DOMAIN: "${ROUTE53_DOMAIN}"
     container_name: web
     ports:
       - "9090:9090"

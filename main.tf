@@ -130,6 +130,7 @@ module "codepipeline" {
   bucket_regional_domain_name = module.s3.bucket_regional_domain_name
   docker_username             = var.docker_username
   docker_password             = var.docker_password
+  bucket_policy_arn           = module.s3.bucket_policy_arn
 }
 
 module "beanstalk" {

@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "beanstalk_bucket" {
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_acl_ownership" {
   bucket = aws_s3_bucket.beanstalk_bucket.id
   rule {
-    object_ownership = "ObjectWriter"
+    object_ownership = "BucketOwnerPreferred"
   }
 
   depends_on = [
@@ -65,7 +65,6 @@ resource "aws_s3_bucket_policy" "public_access_policy" {
         Principal = "*",
         Action = [
           "s3:PutObject",
-          "s3:PutObjectAcl",
           "s3:GetObject"
         ],
         Resource = [

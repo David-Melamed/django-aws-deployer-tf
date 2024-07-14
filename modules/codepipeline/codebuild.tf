@@ -19,6 +19,7 @@ resource "aws_codebuild_project" "validate_source" {
 }
 
 resource "aws_codebuild_project" "build_project" {  
+  depends_on = [ aws_s3_object.custom_settings, aws_s3_object.dockerfile, aws_s3_object.override_settings ]
   name          = "${var.pipeline_name}-build-source"
   service_role  = var.codebuild_role_arn  
   
@@ -93,5 +94,4 @@ locals {
   ecr_repository_parts = split("/", local.ecr_repository_url)
   ecr_repository_dns = element(local.ecr_repository_parts, 0)
   ecr_repository_id = element(local.ecr_repository_parts, 1)
-
 }

@@ -5,3 +5,7 @@ output "beanstalk_bucket_id" {
 output "bucket_regional_domain_name" {
     value = aws_s3_bucket.beanstalk_bucket.bucket_regional_domain_name
 }
+
+output "bucket_policy_arn" {
+    value = aws_s3_bucket.beanstalk_bucket.arn
+}

@@ -15,7 +15,8 @@
         ],
       "Resource": "*"
     },
-    { "Effect": "Allow",
+    { 
+      "Effect": "Allow",
       "Action": "sts:AssumeRole",
       "Resource": "*"
     }

@@ -1,10 +1,4 @@
 resource "aws_codebuild_project" "validate_source" {
-  depends_on = [ 
-    aws_s3_bucket_policy.public_access_policy,
-    aws_s3_bucket_acl.s3_bucket_acl,
-    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership 
-  ]
-
   name          = "${var.pipeline_name}-validate-source"
   service_role  = var.codebuild_role_arn
 
@@ -24,13 +18,8 @@ resource "aws_codebuild_project" "validate_source" {
   }
 }
 
-resource "aws_codebuild_project" "build_project" {
-  depends_on = [ 
-    aws_s3_bucket_policy.public_access_policy,
-    aws_s3_bucket_acl.s3_bucket_acl,
-    aws_s3_bucket_ownership_controls.s3_bucket_acl_ownership 
-  ]
-  
+resource "aws_codebuild_project" "build_project" {  
+  depends_on = [ aws_s3_object.custom_settings, aws_s3_object.dockerfile, aws_s3_object.override_settings ]
   name          = "${var.pipeline_name}-build-source"
   service_role  = var.codebuild_role_arn  
   
@@ -81,6 +70,22 @@ resource "aws_codebuild_project" "build_project" {
         name = "DOCKERFILE_S3_URL"
         value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.dockerfile.key}"
     }
+    environment_variable {
+        name = "DOCKER_USERNAME"
+        value = var.docker_username
+    }
+    environment_variable {
+        name = "DOCKER_PASSWORD"
+        value = var.docker_password
+    }
+    environment_variable {
+        name = "OVERRIDE_SETTINGS_URL"
+        value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.override_settings.key}"
+    } 
+    environment_variable {
+        name = "CUSTOM_SETTINGS_URL"
+        value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.custom_settings.key}"
+    } 
   }
 }
 
@@ -89,5 +94,4 @@ locals {
   ecr_repository_parts = split("/", local.ecr_repository_url)
   ecr_repository_dns = element(local.ecr_repository_parts, 0)
   ecr_repository_id = element(local.ecr_repository_parts, 1)
-
 }

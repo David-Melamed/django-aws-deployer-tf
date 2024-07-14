@@ -61,7 +61,7 @@ variable "engine" {
 variable "engine_version" {
   description = "Version of the MySQL database engine"
   type        = string
-  default     = "5.7"
+  default     = "8.0.35"
 }
 
 variable "skip_final_snapshot" {
@@ -116,17 +116,30 @@ variable "db_password" {
 variable "app_name" {
   description = "Applcation name"
   type        = string
-  default     = "myapptest"
+ 
+  validation {
+    condition = can(regex("^[a-z0-9_-]+$", var.app_name))
+    error_message = "The application name can only contain lowercase letters, numbers, underscores, and hyphens."
+  }
 }
 
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
-  default = "https://github.com/David-Melamed/django-swap-app.git"
 }
 
 variable "branch_name" {
   description = "Django project URL"
   type        = string
   default     = "master"
+}
+
+variable "docker_username" {
+  description = "Personal docker registry username"
+  type        = string
+}
+
+variable "docker_password" {
+  description = "Personal docker registry password"
+  type        = string
 }

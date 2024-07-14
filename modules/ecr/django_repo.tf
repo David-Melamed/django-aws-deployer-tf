@@ -5,7 +5,7 @@ provider "aws" {
 
 # Define the repository name as a separate resource using locals
 locals {
-  repository_name = replace("${var.app_name}_${var.env}","-","_")
+  repository_name = lower(replace("${var.app_name}_${var.env}", "-", "_"))
 }
 
 # Create the ECR repository

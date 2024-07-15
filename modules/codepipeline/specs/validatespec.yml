@@ -7,6 +7,8 @@ phases:
   pre_build:
     commands:
       - echo Testing provided Git URL...
+      - git ls-remote $DJANGO_URL
+
 artifacts:
   files:
     - '**/*'

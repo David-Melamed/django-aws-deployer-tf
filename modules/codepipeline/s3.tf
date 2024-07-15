@@ -3,7 +3,7 @@ resource "aws_s3_object" "dockerfile" {
   key    = "scripts/Dockerfile"
   source = "${path.module}/scripts/Dockerfile"
   acl    = "public-read"
-  depends_on = [ var.bucket_policy_arn ]
+  depends_on = [ var.bucket_policy_arn, var.s3_bucket_acl_ready]
   etag = filesha256("${path.module}/scripts/Dockerfile")
 }
 
@@ -12,7 +12,7 @@ resource "aws_s3_object" "override_settings" {
   key    = "scripts/override_settings.py"
   source = "${path.module}/scripts/override_settings.py"
   acl    = "public-read"
-  depends_on = [ var.bucket_policy_arn ]
+  depends_on = [ var.bucket_policy_arn, var.s3_bucket_acl_ready]
   etag = filesha256("${path.module}/scripts/override_settings.py")
 }
 
@@ -21,6 +21,6 @@ resource "aws_s3_object" "custom_settings" {
   key    = "scripts/custom_settings.py"
   source = "${path.module}/scripts/custom_settings.py"
   acl    = "public-read"
-  depends_on = [ var.bucket_policy_arn ]
+  depends_on = [ var.bucket_policy_arn, var.s3_bucket_acl_ready]
   etag = filesha256("${path.module}/scripts/custom_settings.py")
 }

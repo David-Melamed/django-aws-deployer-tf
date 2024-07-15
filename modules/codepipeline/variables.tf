@@ -24,3 +24,4 @@ variable "image_build_status" {
 variable "docker_username" {}
 variable "docker_password" {}
 variable "bucket_policy_arn" {}
+variable "s3_bucket_acl_ready" {}

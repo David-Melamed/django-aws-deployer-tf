@@ -32,7 +32,7 @@ ARG CUSTOM_SETTINGS_URL
 ARG OVERRIDE_SETTINGS_URL
 
 
-RUN DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" -exec dirname {} \; | head -n 1 | xargs basename) && \
+RUN DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" -exec dirname {} \; | head -n 1) && \
     echo "DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME}" && \
     export DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME} && \
     cd $DJANGO_PROJECT_NAME && \

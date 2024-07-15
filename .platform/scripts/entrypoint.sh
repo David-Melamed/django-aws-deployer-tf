@@ -27,6 +27,20 @@ run_with_retry() {
 
 echo "Starting entrypoint.sh script"
 
+# Check if manage.py exists in the current directory
+if [[ ! -f "manage.py" ]]; then
+    echo "manage.py not found in the current directory. Searching in the main folder..."
+    manage_py_path=$(find . -name "manage.py" 2>/dev/null | head -n 1)
+    if [[ -n "$manage_py_path" ]]; then
+        manage_py_dir=$(dirname "$manage_py_path")
+        echo "manage.py found in: $manage_py_dir"
+        cd "$manage_py_dir"
+    else
+        echo "manage.py not found. Exiting."
+        exit 1
+    fi
+fi
+
 # Commands to run Django application
 django_commands=(
     "python manage.py makemigrations"

@@ -15,6 +15,12 @@
         state: present
         line: 'devops_user ALL=(ALL) NOPASSWD:ALL'
 
+    - name: Add devops_user to docker group
+      user:
+        name: devops_user
+        groups: docker
+        append: yes
+        
   handlers:
     - name: Restart SSH
       service:

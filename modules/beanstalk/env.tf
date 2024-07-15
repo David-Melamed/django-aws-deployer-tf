@@ -148,11 +148,23 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
     name      = "ROUTE53_DOMAIN"
     value     = "https://${var.zone_name}" 
   }
+  
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "DJANGO_SECRET_KEY"
+    value     = "${var.django_secret_key}" 
+  }
 
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "Availability Zones"
     value     = "Any"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:command"
+    name      = "DeploymentPolicy"
+    value     = "Immutable"
   }
 
   tags = {

@@ -131,6 +131,7 @@ module "codepipeline" {
   docker_username             = var.docker_username
   docker_password             = var.docker_password
   bucket_policy_arn           = module.s3.bucket_policy_arn
+  s3_bucket_acl_ready         = module.s3.s3_bucket_acl_ready
 }
 
 module "beanstalk" {
@@ -166,4 +167,5 @@ module "beanstalk" {
   beanstalk_bucket_id       = module.s3.beanstalk_bucket_id
   branch_name               = var.branch_name
   image_build_status        = module.codepipeline.image_build_status
+  django_secret_key         = module.secrets.django_secret_key
 }

@@ -116,6 +116,7 @@ variable "db_password" {
 variable "app_name" {
   description = "Applcation name"
   type        = string
+  default     = "stackoverflow"
  
   validation {
     condition = can(regex("^[a-z0-9_-]+$", var.app_name))
@@ -126,6 +127,7 @@ variable "app_name" {
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
+  default = "https://github.com/Yawan-1/StackOverFlow--Clone.git"
 }
 
 variable "branch_name" {
@@ -142,4 +144,46 @@ variable "docker_username" {
 variable "docker_password" {
   description = "Personal docker registry password"
   type        = string
+}
+
+variable "env" {
+  description = "The environment for the deployment"
+  type        = string
+  default     = "dev"
+}
+
+variable "zone_name" {
+  description = "The DNS zone name"
+  type        = string
+  default     = "awsdjangodeployer.com"
+}
+
+variable "app_version" {
+  description = "The application version"
+  type        = string
+  default     = "1"
+}
+
+variable "rds_instance_class" {
+  description = "The RDS instance class"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "db_port" {
+  description = "The database port"
+  type        = string
+  default     = "3306"
+}
+
+variable "image_platform" {
+  description = "The platform for the Docker image"
+  type        = string
+  default     = "linux/amd64"
+}
+
+variable "ecr_region" {
+  description = "The region for the ECR repository"
+  type        = string
+  default     = "us-east-1"
 }

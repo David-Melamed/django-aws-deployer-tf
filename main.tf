@@ -1,24 +1,12 @@
-locals {
-  env                = "dev"
-  zone_name          = "awsdjangodeployer.com"
-  app_version        = "1"
-  rds_instance_class = "db.t3.micro"
-  db_host            = "rds-${local.env}.${local.zone_name}"
-  db_port            = "3306"
-  image_platform     = "linux/amd64"
-  ecr_region         = "us-east-1"
-  repo_owner         = regex("https://github.com/([^/]+)/", var.django_project_url)[0]
-  repo_name          = regex("https://github.com/[^/]+/([^/]+).git", var.django_project_url)[0]
-}
-
-
+# S3 Module
 module "s3" {
   source             = "./modules/s3"
-  bucket_name        = "${var.app_name}-${local.env}"
-  env                = local.env
+  bucket_name        = "${var.app_name}-${var.env}"
+  env                = var.env
   beanstalk_app_name = var.app_name
 }
 
+# VPC Module
 module "vpc" {
   source                  = "./modules/vpc"
   tags                    = "test1"
@@ -27,40 +15,44 @@ module "vpc" {
   public_sn_count         = var.public_sn_count
   public_cidrs            = var.public_cidrs
   rt_route_cidr_block     = var.rt_route_cidr_block
-  sg_name                 = "${var.app_name}-${local.env}-sg"
+  sg_name                 = "${var.app_name}-${var.env}-sg"
   enable_dns_hostnames    = var.enable_dns_hostnames
   map_public_ip_on_launch = var.map_public_ip_on_launch
 }
 
+# Security Groups Module
 module "sgs" {
   source = "./modules/sgs"
   vpc_id = module.vpc.vpc_id
 }
 
+# Secrets Module
 module "secrets" {
   source      = "./modules/secrets"
-  kms_alias   = "${var.app_name}-${local.env}-kms-alias-new"
-  db_name     = "${var.app_name}-${local.env}"
+  kms_alias   = "${var.app_name}-${var.env}-kms-alias"
+  db_name     = "${var.app_name}-${var.env}"
   db_username = var.db_username
   db_password = var.db_password
 }
 
+# IAM Module
 module "iam" {
-  source                               = "./modules/iam"
-  kms_key_arn                          = module.secrets.kms_key_arn
-  role_name                            = "${var.app_name}-${local.env}-role"
+  source      = "./modules/iam"
+  kms_key_arn = module.secrets.kms_key_arn
+  role_name   = "${var.app_name}-${var.env}-role"
 }
 
+# RDS Module
 module "rds" {
   source                = "./modules/rds"
   allocated_storage     = var.allocated_storage
   engine                = var.engine
   engine_version        = var.engine_version
-  instance_class        = local.rds_instance_class
+  instance_class        = var.rds_instance_class
   username              = module.secrets.db_username
   password              = module.secrets.db_password
   db_name               = module.secrets.db_name
-  identifier            = "${var.app_name}-${local.env}"
+  identifier            = "${var.app_name}-${var.env}"
   skip_final_snapshot   = var.skip_final_snapshot
   subnet_name           = module.vpc.sg_name
   subnet_ids            = module.vpc.subnet_ids
@@ -71,20 +63,23 @@ module "rds" {
   public_subnet_ids     = module.vpc.public_subnet_ids
 }
 
+# Route 53 Zone Module
 module "route53_zone" {
   source    = "./modules/route53/zone"
-  zone_name = local.zone_name
+  zone_name = var.zone_name
   vpc_id    = module.vpc.vpc_id
 }
 
+# Route 53 RDS Record Module
 module "route53_rds_record" {
   source          = "./modules/route53/rds_record"
-  rds_record_name = "rds-${local.env}"
+  rds_record_name = "rds-${var.env}"
   zone_name       = module.route53_zone.zone_name
   rds_address     = module.rds.db_endpoint
   zone_id         = module.route53_zone.zone_id
 }
 
+# Route 53 Registered Domains Module
 module "route53_registered_domains" {
   source                = "./modules/route53/registered_domains"
   zone_name             = module.route53_zone.zone_name
@@ -92,37 +87,40 @@ module "route53_registered_domains" {
   zone_web_name_servers = module.route53_zone.name_servers
 }
 
+# ACM Module (HTTPS Encryption)
 module "acm" {
   source      = "./modules/acm"
   domain_name = module.route53_zone.zone_name
   zone_id     = module.route53_zone.zone_id
 }
 
+# ECR Module (Create Public ECR)
 module "ecr" {
-  source              = "./modules/ecr"
-  app_name            = var.app_name
-  image_tag           = local.app_version
-  django_project_url  = var.django_project_url
-  env                 = local.env
-  image_platform      = local.image_platform
-  ecr_region          = local.ecr_region
+  source             = "./modules/ecr"
+  app_name           = var.app_name
+  image_tag          = var.app_version
+  django_project_url = var.django_project_url
+  env                = var.env
+  image_platform     = var.image_platform
+  ecr_region         = var.ecr_region
 }
 
+# CodeBuild Module (Build and Push Image)
 module "codebuild" { 
   source                      = "./modules/codebuild"
   app_name                    = var.app_name
-  image_tag                   = local.app_version
+  image_tag                   = var.app_version
   django_project_url          = var.django_project_url
-  env                         = local.env
-  image_platform              = local.image_platform
-  ecr_region                  = local.ecr_region
-  pipeline_name               = "${var.app_name}-${local.env}"
+  env                         = var.env
+  image_platform              = var.image_platform
+  ecr_region                  = var.ecr_region
+  pipeline_name               = "${var.app_name}-${var.env}"
   pipeline_role_arn           = module.iam.pipeline_role_arn
-  s3_bucket_name              = "${var.app_name}-${local.env}"
-  stage_version               = local.app_version
+  s3_bucket_name              = "${var.app_name}-${var.env}"
+  stage_version               = var.app_version
   codebuild_role_arn          = module.iam.codebuild_role_arn
   ecr_repository_name         = module.ecr.ecr_repository_name
-  app_version                 = local.app_version
+  app_version                 = var.app_version
   repo_owner                  = local.repo_owner
   repo_name                   = local.repo_name
   beanstalk_bucket_id         = module.s3.beanstalk_bucket_id
@@ -134,16 +132,17 @@ module "codebuild" {
   s3_bucket_acl_ready         = module.s3.s3_bucket_acl_ready
 }
 
+# Beanstalk Module
 module "beanstalk" {
   source                    = "./modules/beanstalk"
   ebs_app_name              = var.app_name
   ebs_app_description       = var.ebs_app_description
   solution_stack_name       = var.solution_stack_name
-  env                       = local.env
+  env                       = var.env
   service_role_name         = var.service_role_name
   instance_type             = var.instance_type
-  bucket_name               = "${var.app_name}-${local.env}-${local.app_version}-bucket"
-  application_version       = local.app_version
+  bucket_name               = "${var.app_name}-${var.env}-${var.app_version}-bucket"
+  application_version       = var.app_version
   ssh_public_key_local_path = var.ssh_public_key_local_path
   service_role_arn          = module.iam.role_arn
   vpc_id                    = module.vpc.vpc_id
@@ -154,14 +153,14 @@ module "beanstalk" {
   public_subnet_ids         = module.vpc.public_subnet_ids
   beanstalk_sg_id           = module.sgs.beanstalk_sg_id
   db_host                   = local.db_host
-  db_port                   = local.db_port
+  db_port                   = var.db_port
   db_name                   = module.secrets.db_name
   db_user                   = module.secrets.db_username
   db_password               = module.secrets.db_password
   alb_sg_id                 = module.sgs.alb_sg_id
   django_project_url        = var.django_project_url
   image_uri                 = module.ecr.ecr_repository_url
-  image_tag                 = local.app_version
+  image_tag                 = var.app_version
   repo_owner                = local.repo_owner
   repo_name                 = local.repo_name
   beanstalk_bucket_id       = module.s3.beanstalk_bucket_id

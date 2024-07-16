@@ -17,24 +17,23 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /code
 
-# Copy django project files
-COPY . .
+# Copy the requirements file and install dependencies
+COPY requirements.txt /code/
+RUN pip install --upgrade pip && pip install -r requirements.txt && pip install mysqlclient
+
+# Copy the rest of the Django project files
+COPY . /code/
 
 # List the contents of /code to verify
 RUN ls -la /code
 
-# Clone the repository
-RUN pip install --upgrade pip && pip install -r requirements.txt
-
-# Find the directory containing settings.py and set the environment variable
-
+# Arguments for settings URLs
 ARG CUSTOM_SETTINGS_URL
 ARG OVERRIDE_SETTINGS_URL
 
-
+# Find the directory containing settings.py and set the environment variable, then download settings
 RUN DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" -exec dirname {} \; | head -n 1) && \
     echo "DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME}" && \
-    export DJANGO_PROJECT_NAME=${DJANGO_PROJECT_NAME} && \
     cd $DJANGO_PROJECT_NAME && \
     curl -o override_settings.py $OVERRIDE_SETTINGS_URL && \
     curl -o custom_settings.py $CUSTOM_SETTINGS_URL && \

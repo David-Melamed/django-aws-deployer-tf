@@ -40,6 +40,7 @@ RUN DJANGO_PROJECT_NAME=$(find . -type f -name "settings.py" -exec dirname {} \;
     curl -o custom_settings.py $CUSTOM_SETTINGS_URL && \
     chmod +x custom_settings.py override_settings.py
 
+ENV DJANGO_PROJECT_PATH ${DJANGO_PROJECT_NAME}
 
 # Expose port 9090 for the Django app
 EXPOSE 9090

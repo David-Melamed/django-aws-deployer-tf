@@ -23,9 +23,9 @@ output "project_name" {
 }
 
 output "ecr_repository_id" {
-  value = module.codepipeline.ecr_repository_id
+  value = module.codebuild.ecr_repository_id
 }
 
 output "ecr_repository_dns" {
-  value = module.codepipeline.ecr_repository_dns
+  value = module.codebuild.ecr_repository_dns
 }

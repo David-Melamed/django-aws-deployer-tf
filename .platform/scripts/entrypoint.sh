@@ -41,18 +41,30 @@ if [[ ! -f "manage.py" ]]; then
     fi
 fi
 
+# Check if STATIC_ROOT is set in settings.py
+if grep -q 'STATIC_ROOT' ${DJANGO_PROJECT_NAME}/settings.py; then
+    echo "STATIC_ROOT found in settings.py. Adding collectstatic to commands."
+    collectstatic_command="python manage.py collectstatic --noinput"
+else
+    echo "STATIC_ROOT not found in settings.py. Skipping collectstatic."
+    collectstatic_command=""
+fi
+
 # Commands to run Django application
 django_commands=(
     "python manage.py makemigrations"
     "python manage.py migrate"
+    "$collectstatic_command"
     "python manage.py runserver 0.0.0.0:9090"
 )
 
 # Execute Django commands with retry
 for cmd in "${django_commands[@]}"; do
-    echo "Running command: $cmd"
-    run_with_retry "$cmd"
-    echo "Finished command: $cmd"
+    if [[ -n "$cmd" ]]; then
+        echo "Running command: $cmd"
+        run_with_retry "$cmd"
+        echo "Finished command: $cmd"
+    fi
 done
 
 echo "Completed entrypoint.sh script"

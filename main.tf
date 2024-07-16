@@ -108,8 +108,8 @@ module "ecr" {
   ecr_region          = local.ecr_region
 }
 
-module "codepipeline" { 
-  source                      = "./modules/codepipeline"
+module "codebuild" { 
+  source                      = "./modules/codebuild"
   app_name                    = var.app_name
   image_tag                   = local.app_version
   django_project_url          = var.django_project_url
@@ -166,6 +166,6 @@ module "beanstalk" {
   repo_name                 = local.repo_name
   beanstalk_bucket_id       = module.s3.beanstalk_bucket_id
   branch_name               = var.branch_name
-  image_build_status        = module.codepipeline.image_build_status
+  image_build_status        = module.codebuild.image_build_status
   django_secret_key         = module.secrets.django_secret_key
 }

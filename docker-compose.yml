@@ -10,6 +10,7 @@ services:
       DB_PORT: "${DB_PORT}"
       ROUTE53_DOMAIN: "${ROUTE53_DOMAIN}"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY}"
+      DJANGO_PROJECT_NAME: "${DJANGO_PROJECT_NAME}"
     container_name: web
     ports:
       - "9090:9090"

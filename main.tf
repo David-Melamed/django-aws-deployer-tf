@@ -1,3 +1,4 @@
+# S3 Module
 module "s3" {
   source             = "./modules/s3"
   bucket_name        = "${var.app_name}-${var.env}"
@@ -5,6 +6,7 @@ module "s3" {
   beanstalk_app_name = var.app_name
 }
 
+# VPC Module
 module "vpc" {
   source                  = "./modules/vpc"
   tags                    = "test1"
@@ -18,25 +20,29 @@ module "vpc" {
   map_public_ip_on_launch = var.map_public_ip_on_launch
 }
 
+# Security Groups Module
 module "sgs" {
   source = "./modules/sgs"
   vpc_id = module.vpc.vpc_id
 }
 
+# Secrets Module
 module "secrets" {
   source      = "./modules/secrets"
-  kms_alias   = "${var.app_name}-${var.env}-kms-alias-new"
+  kms_alias   = "${var.app_name}-${var.env}-kms-alias"
   db_name     = "${var.app_name}-${var.env}"
   db_username = var.db_username
   db_password = var.db_password
 }
 
+# IAM Module
 module "iam" {
-  source                               = "./modules/iam"
-  kms_key_arn                          = module.secrets.kms_key_arn
-  role_name                            = "${var.app_name}-${var.env}-role"
+  source      = "./modules/iam"
+  kms_key_arn = module.secrets.kms_key_arn
+  role_name   = "${var.app_name}-${var.env}-role"
 }
 
+# RDS Module
 module "rds" {
   source                = "./modules/rds"
   allocated_storage     = var.allocated_storage
@@ -57,12 +63,14 @@ module "rds" {
   public_subnet_ids     = module.vpc.public_subnet_ids
 }
 
+# Route 53 Zone Module
 module "route53_zone" {
   source    = "./modules/route53/zone"
   zone_name = var.zone_name
   vpc_id    = module.vpc.vpc_id
 }
 
+# Route 53 RDS Record Module
 module "route53_rds_record" {
   source          = "./modules/route53/rds_record"
   rds_record_name = "rds-${var.env}"
@@ -71,6 +79,7 @@ module "route53_rds_record" {
   zone_id         = module.route53_zone.zone_id
 }
 
+# Route 53 Registered Domains Module
 module "route53_registered_domains" {
   source                = "./modules/route53/registered_domains"
   zone_name             = module.route53_zone.zone_name
@@ -78,22 +87,25 @@ module "route53_registered_domains" {
   zone_web_name_servers = module.route53_zone.name_servers
 }
 
+# ACM Module (HTTPS Encryption)
 module "acm" {
   source      = "./modules/acm"
   domain_name = module.route53_zone.zone_name
   zone_id     = module.route53_zone.zone_id
 }
 
+# ECR Module (Create Public ECR)
 module "ecr" {
-  source              = "./modules/ecr"
-  app_name            = var.app_name
-  image_tag           = var.app_version
-  django_project_url  = var.django_project_url
-  env                 = var.env
-  image_platform      = var.image_platform
-  ecr_region          = var.ecr_region
+  source             = "./modules/ecr"
+  app_name           = var.app_name
+  image_tag          = var.app_version
+  django_project_url = var.django_project_url
+  env                = var.env
+  image_platform     = var.image_platform
+  ecr_region         = var.ecr_region
 }
 
+# CodeBuild Module (Build and Push Image)
 module "codebuild" { 
   source                      = "./modules/codebuild"
   app_name                    = var.app_name
@@ -120,6 +132,7 @@ module "codebuild" {
   s3_bucket_acl_ready         = module.s3.s3_bucket_acl_ready
 }
 
+# Beanstalk Module
 module "beanstalk" {
   source                    = "./modules/beanstalk"
   ebs_app_name              = var.app_name

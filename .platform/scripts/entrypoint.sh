@@ -42,7 +42,7 @@ if [[ ! -f "manage.py" ]]; then
 fi
 
 # Check if STATIC_ROOT is set in settings.py
-if grep -q 'STATIC_ROOT' ${DJANGO_PROJECT_PATH}/settings.py; then
+if grep -q 'STATIC_ROOT' ${DJANGO_PROJECT_NAME}/settings.py; then
     echo "STATIC_ROOT found in settings.py. Adding collectstatic to commands."
     collectstatic_command="python manage.py collectstatic --noinput"
 else

@@ -55,24 +55,8 @@ IAM: Manages IAM roles and policies.
 Route 53: Configures DNS settings.
 ACM: Provisions SSL certificates.
 ECR: Manages ECR for Docker images.
-CodeBuild: Sets up CodeBuild for CI/CD.
-Elastic Beanstalk: Deploys the Django application.
-
-### Directory Structure
-├── modules
-│   ├── s3
-│   ├── vpc
-│   ├── rds
-│   ├── iam
-│   ├── route53
-│   ├── acm
-│   ├── ecr
-│   ├── codebuild
-│   └── beanstalk
-├── main.tf
-├── variables.tf
-├── outputs.tf
-└── README.md
+CodeBuild: Sets up CodeBuild for CI to build and push docker image to ECR
+Elastic Beanstalk: Deploys the Django application and create ALB.
 
 
 ### Acknowledgements

@@ -116,7 +116,7 @@ variable "db_password" {
 variable "app_name" {
   description = "Applcation name"
   type        = string
-  default     = "stackoverflow"
+  default     = "black-dashboard"
  
   validation {
     condition = can(regex("^[a-z0-9_-]+$", var.app_name))
@@ -127,7 +127,7 @@ variable "app_name" {
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
-  default = "https://github.com/Yawan-1/StackOverFlow--Clone.git"
+  default = "https://github.com/app-generator/django-black-dashboard.git"
 }
 
 variable "branch_name" {

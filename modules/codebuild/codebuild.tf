@@ -16,6 +16,7 @@ resource "aws_codebuild_project" "validate_source" {
     image        = "aws/codebuild/standard:5.0"
     type         = "LINUX_CONTAINER"
   }
+  tags = var.generic_tags
 }
 
 resource "aws_codebuild_project" "build_project" {  
@@ -87,6 +88,7 @@ resource "aws_codebuild_project" "build_project" {
         value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.custom_settings.key}"
     } 
   }
+  tags = var.generic_tags
 }
 
 locals {

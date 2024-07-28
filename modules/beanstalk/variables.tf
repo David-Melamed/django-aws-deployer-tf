@@ -21,10 +21,6 @@ variable private_subnet_ids {
 variable public_subnet_ids {
   type = list(any)
 }
-variable "generic_tags" {
-  description = "Generic tags from the root module"
-  type        = map(string)
-}
 
 variable "db_host" {}
 variable "db_port" {}
@@ -41,3 +37,7 @@ variable "beanstalk_bucket_id" {}
 variable "branch_name" {}
 variable "image_build_status" {}
 variable "django_secret_key" {}
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}

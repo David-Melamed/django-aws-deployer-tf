@@ -20,6 +20,8 @@ resource "aws_kms_key" "kms_key" {
   ]
 }
 POLICY
+
+  tags = var.generic_tags
 }
 
 resource "aws_kms_alias" "kms_alias" {

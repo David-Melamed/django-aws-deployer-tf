@@ -31,20 +31,20 @@ module "sgs" {
 
 # Secrets Module
 module "secrets" {
-  source      = "./modules/secrets"
-  kms_alias   = "${var.app_name}-${var.env}-kms-alias"
-  db_name     = "${var.app_name}-${var.env}"
-  db_username = var.db_username
-  db_password = var.db_password
-  generic_tags       = local.generic_tags
+  source       = "./modules/secrets"
+  kms_alias    = "${var.app_name}-${var.env}-kms-alias"
+  db_name      = "${var.app_name}-${var.env}"
+  db_username  = var.db_username
+  db_password  = var.db_password
+  generic_tags = local.generic_tags
 }
 
 # IAM Module
 module "iam" {
-  source      = "./modules/iam"
-  kms_key_arn = module.secrets.kms_key_arn
-  role_name   = "${var.app_name}-${var.env}-role"
-  generic_tags       = local.generic_tags
+  source       = "./modules/iam"
+  kms_key_arn  = module.secrets.kms_key_arn
+  role_name    = "${var.app_name}-${var.env}-role"
+  generic_tags = local.generic_tags
 }
 
 # RDS Module
@@ -66,15 +66,15 @@ module "rds" {
   instance_private_ips  = module.beanstalk.instance_private_ips
   private_subnet_ids    = module.vpc.private_subnet_ids
   public_subnet_ids     = module.vpc.public_subnet_ids
-  generic_tags       = local.generic_tags
+  generic_tags          = local.generic_tags
 }
 
 # Route 53 Zone Module
 module "route53_zone" {
-  source    = "./modules/route53/zone"
-  zone_name = var.zone_name
-  vpc_id    = module.vpc.vpc_id
-  generic_tags       = local.generic_tags
+  source       = "./modules/route53/zone"
+  zone_name    = var.zone_name
+  vpc_id       = module.vpc.vpc_id
+  generic_tags = local.generic_tags
 }
 
 # Route 53 RDS Record Module
@@ -96,10 +96,10 @@ module "route53_registered_domains" {
 
 # ACM Module (HTTPS Encryption)
 module "acm" {
-  source      = "./modules/acm"
-  domain_name = module.route53_zone.zone_name
-  zone_id     = module.route53_zone.zone_id
-  generic_tags       = local.generic_tags
+  source       = "./modules/acm"
+  domain_name  = module.route53_zone.zone_name
+  zone_id      = module.route53_zone.zone_id
+  generic_tags = local.generic_tags
 }
 
 # ECR Module (Create Public ECR)
@@ -139,7 +139,7 @@ module "codebuild" {
   docker_password             = var.docker_password
   bucket_policy_arn           = module.s3.bucket_policy_arn
   s3_bucket_acl_ready         = module.s3.s3_bucket_acl_ready
-  generic_tags       = local.generic_tags
+  generic_tags                = local.generic_tags
 }
 
 # Beanstalk Module

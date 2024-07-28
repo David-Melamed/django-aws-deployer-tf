@@ -2,9 +2,7 @@ resource "aws_acm_certificate" "web_cert" {
   domain_name       = var.domain_name
   validation_method = "DNS"
 
-  tags = {
-    Name = "EBS Lab ACM Certificate"
-  }
+  tags = var.generic_tags
 
   lifecycle {
     create_before_destroy = true

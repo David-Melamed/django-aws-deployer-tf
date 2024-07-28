@@ -25,3 +25,7 @@ variable "docker_username" {}
 variable "docker_password" {}
 variable "bucket_policy_arn" {}
 variable "s3_bucket_acl_ready" {}
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}

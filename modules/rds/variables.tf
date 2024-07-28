@@ -27,3 +27,7 @@ variable public_subnet_ids {
 }
 
 variable identifier {}
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}

@@ -29,3 +29,8 @@ variable "credentials" {
     db_password = ""
   }
 }
+
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}

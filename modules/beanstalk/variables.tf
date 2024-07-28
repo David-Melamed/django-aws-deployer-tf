@@ -21,6 +21,10 @@ variable private_subnet_ids {
 variable public_subnet_ids {
   type = list(any)
 }
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}
 
 variable "db_host" {}
 variable "db_port" {}

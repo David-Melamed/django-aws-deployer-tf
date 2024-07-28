@@ -12,3 +12,7 @@ variable "public_cidrs" {
   type = list(any)
 }
 
+variable "generic_tags" {
+  description = "Generic tags from the root module"
+  type        = map(string)
+}

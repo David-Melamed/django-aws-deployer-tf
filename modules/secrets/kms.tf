@@ -79,18 +79,25 @@ locals {
 data "external" "encrypt_db_name" {
   count   = local.db_name != "" ? 1 : 0
   program = ["${path.module}/encrypt.sh", aws_kms_key.kms_key.key_id, local.db_name, data.aws_region.current.name]
+  depends_on = [ aws_kms_key.kms_key ]
 }
 
 data "external" "encrypt_db_username" {
   count   = local.db_username != "" ? 1 : 0
   program = ["${path.module}/encrypt.sh", aws_kms_key.kms_key.key_id, local.db_username, data.aws_region.current.name]
+  depends_on = [ aws_kms_key.kms_key ]
 }
 
 data "external" "encrypt_db_password" {
   count   = local.db_password != "" ? 1 : 0
   program = ["${path.module}/encrypt.sh", aws_kms_key.kms_key.key_id, local.db_password, data.aws_region.current.name]
+  depends_on = [ aws_kms_key.kms_key ]
 }
 
+data "external" "encrypt_django_secret_key" {
+  program = ["${path.module}/encrypt.sh", aws_kms_key.kms_key.key_id, random_string.secret_key.result, data.aws_region.current.name]
+  depends_on = [ aws_kms_key.kms_key ]
+}
 
 data "aws_kms_secrets" "db" {
   count = (local.db_name != "" && local.db_username != "" && local.db_password != "") ? 1 : 0
@@ -123,11 +130,6 @@ data "aws_kms_secrets" "webapp" {
     payload = data.external.encrypt_django_secret_key.result["encrypted_text"]
   }
 }
-
-data "external" "encrypt_django_secret_key" {
-  program = ["${path.module}/encrypt.sh", aws_kms_key.kms_key.key_id, random_string.secret_key.result, data.aws_region.current.name]
-}
-
 
 resource "null_resource" "remove_credentials_file_when_destroy" {
   provisioner "local-exec" {

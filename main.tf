@@ -17,7 +17,6 @@ module "vpc" {
   enable_dns_hostnames    = var.enable_dns_hostnames
   map_public_ip_on_launch = var.map_public_ip_on_launch
   generic_tags            = local.generic_tags
-  tags                    = var.tags
 }
 
 # Security Groups Module

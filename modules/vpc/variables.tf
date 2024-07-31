@@ -1,6 +1,5 @@
 variable "vpc_cidr" {}
 variable "instance_tenancy" {}
-variable "tags" {}
 variable "map_public_ip_on_launch" {}
 variable "rt_route_cidr_block" {}
 variable sg_name {}

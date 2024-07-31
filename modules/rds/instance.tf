@@ -10,12 +10,11 @@ resource "aws_db_instance" "mysql_db" {
   vpc_security_group_ids = var.vpc_security_group_id
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   identifier = lower(var.identifier)
+  tags = var.generic_tags
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   subnet_ids = var.private_subnet_ids
 
-  tags = {
-    Name = "MySQL DB Subnet Group"
-  }
+  tags = var.generic_tags
 }

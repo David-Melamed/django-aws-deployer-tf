@@ -3,6 +3,7 @@ resource "aws_security_group" "beanstalk_sg" {
   vpc_id      = var.vpc_id
   name        = "beanstalk-sg"
   description = "Security group for Elastic Beanstalk"
+  tags = var.generic_tags
 }
 
 resource "aws_security_group_rule" "beanstalk_sg_rule_80" {

@@ -3,6 +3,7 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = var.vpc_id
   name        = "alb-sg"
   description = "Security group for Application Load Balancer"
+  tags = var.generic_tags
 }
 
 resource "aws_security_group_rule" "alb_sg_rule_80" {

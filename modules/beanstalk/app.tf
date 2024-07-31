@@ -14,4 +14,5 @@ resource "aws_elastic_beanstalk_application_version" "app_version" {
   application = var.image_build_status ? aws_elastic_beanstalk_application.ebslab_app[0].name : ""
   bucket      = var.beanstalk_bucket_id
   key         = aws_s3_object.application_zip.key
+  tags = var.generic_tags
 }

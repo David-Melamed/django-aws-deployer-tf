@@ -9,6 +9,7 @@ locals {
 resource "aws_iam_role" "codepipeline_role" {
   name = "codepipeline_role"
   assume_role_policy = jsonencode(local.assume_codepipeline_role_policy_file)
+  tags = var.generic_tags
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {

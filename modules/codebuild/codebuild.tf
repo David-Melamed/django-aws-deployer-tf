@@ -10,12 +10,19 @@ resource "aws_codebuild_project" "validate_source" {
   artifacts {
     type = "NO_ARTIFACTS"
   }
-
+  
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
     image        = "aws/codebuild/standard:5.0"
     type         = "LINUX_CONTAINER"
+
+    environment_variable {
+      name  = "DJANGO_URL"
+      value = var.django_project_url
+    }
   }
+  
+  tags = var.generic_tags
 }
 
 resource "aws_codebuild_project" "build_project" {  
@@ -87,6 +94,7 @@ resource "aws_codebuild_project" "build_project" {
         value = "https://${var.bucket_regional_domain_name}/${aws_s3_object.custom_settings.key}"
     } 
   }
+  tags = var.generic_tags
 }
 
 locals {

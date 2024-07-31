@@ -13,4 +13,5 @@ resource "aws_s3_object" "application_zip" {
   bucket = var.beanstalk_bucket_id
   key    = "beanstalk/${var.ebs_app_name}-${var.application_version}.zip"
   source = "${var.ebs_app_name}-${var.application_version}.zip"
+  tags = var.generic_tags
 }

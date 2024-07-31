@@ -5,13 +5,12 @@ resource "aws_default_route_table" "internal_ebslab_default" {
     cidr_block = var.rt_route_cidr_block
     gateway_id = aws_internet_gateway.ebslab_gw.id
   }
-  tags = {
-    Name = var.tags
-  }
+
+  tags = var.generic_tags
 }
 
 resource "aws_route_table_association" "default" {
-  count          = var.public_sn_count
+  count          = length(var.subnets)
   subnet_id      = aws_subnet.ebslab_subnets[count.index].id
   route_table_id = aws_default_route_table.internal_ebslab_default.id
 }

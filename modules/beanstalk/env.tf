@@ -167,9 +167,7 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
     value     = "Immutable"
   }
 
-  tags = {
-        "environment-name" = format("%s-%s", var.ebs_app_name, var.env)
-  }
+  tags = var.generic_tags
   
   depends_on = [ 
     var.ssl_certificate_arn,
@@ -182,6 +180,7 @@ resource "aws_elastic_beanstalk_environment" "ebslab_env" {
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "aws-elasticbeanstalk-ec2-instance-profile"
   role = var.service_role_name
+  tags = var.generic_tags
 }
 
 data "external" "get_django_project_name" {

@@ -4,42 +4,45 @@ module "s3" {
   bucket_name        = "${var.app_name}-${var.env}"
   env                = var.env
   beanstalk_app_name = var.app_name
+  generic_tags       = local.generic_tags
 }
 
 # VPC Module
 module "vpc" {
   source                  = "./modules/vpc"
-  tags                    = "test1"
   instance_tenancy        = var.instance_tenancy
   vpc_cidr                = var.vpc_cidr
-  public_sn_count         = var.public_sn_count
-  public_cidrs            = var.public_cidrs
   rt_route_cidr_block     = var.rt_route_cidr_block
   sg_name                 = "${var.app_name}-${var.env}-sg"
   enable_dns_hostnames    = var.enable_dns_hostnames
   map_public_ip_on_launch = var.map_public_ip_on_launch
+  generic_tags            = local.generic_tags
+  tags                    = var.tags
 }
 
 # Security Groups Module
 module "sgs" {
   source = "./modules/sgs"
   vpc_id = module.vpc.vpc_id
+  generic_tags       = local.generic_tags
 }
 
 # Secrets Module
 module "secrets" {
-  source      = "./modules/secrets"
-  kms_alias   = "${var.app_name}-${var.env}-kms-alias"
-  db_name     = "${var.app_name}-${var.env}"
-  db_username = var.db_username
-  db_password = var.db_password
+  source       = "./modules/secrets"
+  kms_alias    = "${var.app_name}-${var.env}-kms-alias"
+  db_name      = "${var.app_name}-${var.env}"
+  db_username  = var.db_username
+  db_password  = var.db_password
+  generic_tags = local.generic_tags
 }
 
 # IAM Module
 module "iam" {
-  source      = "./modules/iam"
-  kms_key_arn = module.secrets.kms_key_arn
-  role_name   = "${var.app_name}-${var.env}-role"
+  source       = "./modules/iam"
+  kms_key_arn  = module.secrets.kms_key_arn
+  role_name    = "${var.app_name}-${var.env}-role"
+  generic_tags = local.generic_tags
 }
 
 # RDS Module
@@ -61,13 +64,15 @@ module "rds" {
   instance_private_ips  = module.beanstalk.instance_private_ips
   private_subnet_ids    = module.vpc.private_subnet_ids
   public_subnet_ids     = module.vpc.public_subnet_ids
+  generic_tags          = local.generic_tags
 }
 
 # Route 53 Zone Module
 module "route53_zone" {
-  source    = "./modules/route53/zone"
-  zone_name = var.zone_name
-  vpc_id    = module.vpc.vpc_id
+  source       = "./modules/route53/zone"
+  zone_name    = var.zone_name
+  vpc_id       = module.vpc.vpc_id
+  generic_tags = local.generic_tags
 }
 
 # Route 53 RDS Record Module
@@ -89,9 +94,10 @@ module "route53_registered_domains" {
 
 # ACM Module (HTTPS Encryption)
 module "acm" {
-  source      = "./modules/acm"
-  domain_name = module.route53_zone.zone_name
-  zone_id     = module.route53_zone.zone_id
+  source       = "./modules/acm"
+  domain_name  = module.route53_zone.zone_name
+  zone_id      = module.route53_zone.zone_id
+  generic_tags = local.generic_tags
 }
 
 # ECR Module (Create Public ECR)
@@ -103,6 +109,7 @@ module "ecr" {
   env                = var.env
   image_platform     = var.image_platform
   ecr_region         = var.ecr_region
+  generic_tags       = local.generic_tags
 }
 
 # CodeBuild Module (Build and Push Image)
@@ -130,6 +137,7 @@ module "codebuild" {
   docker_password             = var.docker_password
   bucket_policy_arn           = module.s3.bucket_policy_arn
   s3_bucket_acl_ready         = module.s3.s3_bucket_acl_ready
+  generic_tags                = local.generic_tags
 }
 
 # Beanstalk Module
@@ -167,4 +175,5 @@ module "beanstalk" {
   branch_name               = var.branch_name
   image_build_status        = module.codebuild.image_build_status
   django_secret_key         = module.secrets.django_secret_key
+  generic_tags              = local.generic_tags
 }

@@ -4,8 +4,8 @@
 PROJECT_NAME=$1
 BUILD_ID=$2
 
-TIMEOUT=300 # 5 minutes timeout in seconds
-INTERVAL=30 # Check interval in seconds
+TIMEOUT=15 # 5 minutes timeout in seconds
+INTERVAL=50 # Check interval in seconds
 
 # Function to get the build status
 get_build_status() {

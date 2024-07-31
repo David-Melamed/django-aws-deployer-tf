@@ -13,8 +13,6 @@ module "vpc" {
   tags                    = "test1"
   instance_tenancy        = var.instance_tenancy
   vpc_cidr                = var.vpc_cidr
-  public_sn_count         = var.public_sn_count
-  public_cidrs            = var.public_cidrs
   rt_route_cidr_block     = var.rt_route_cidr_block
   sg_name                 = "${var.app_name}-${var.env}-sg"
   enable_dns_hostnames    = var.enable_dns_hostnames

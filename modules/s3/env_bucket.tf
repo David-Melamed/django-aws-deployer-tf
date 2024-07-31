@@ -66,6 +66,4 @@ resource "aws_s3_bucket_policy" "public_access_policy" {
       }
     ]
   })
-
-  depends_on = [ aws_s3_bucket_acl.s3_bucket_acl ]
 }

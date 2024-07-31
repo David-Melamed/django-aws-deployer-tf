@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "Tags applied to all resources"
+  type        = string
+  default     = "django-deployer"
+}
+
 variable "instance_tenancy" {
   description = "EC2 instance tenancy"
   type        = string
@@ -8,6 +14,18 @@ variable "vpc_cidr" {
   description = "CIDR for the VPC"
   type        = string
   default     = "10.0.0.0/16"
+}
+
+variable "public_sn_count" {
+  description = "Number of public subnets"
+  type        = number
+  default     = 2
+}
+
+variable "public_cidrs" {
+  description = "CIDR blocks for the public subnets"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "rt_route_cidr_block" {
@@ -98,7 +116,7 @@ variable "db_password" {
 variable "app_name" {
   description = "Applcation name"
   type        = string
-  default     = "swapapp"
+  default     = "black-dashboard"
  
   validation {
     condition = can(regex("^[a-z0-9_-]+$", var.app_name))
@@ -109,7 +127,7 @@ variable "app_name" {
 variable "django_project_url" {
   description = "Django project URL"
   type        = string
-  default = "https://github.com/David-Melamed/django-swap-app.git"
+  default = "https://github.com/app-generator/django-black-dashboard.git"
 }
 
 variable "branch_name" {
@@ -121,13 +139,11 @@ variable "branch_name" {
 variable "docker_username" {
   description = "Personal docker registry username"
   type        = string
-  default     = "davidmelamed"
 }
 
 variable "docker_password" {
   description = "Personal docker registry password"
   type        = string
-  default     = "Davehasus9991!"
 }
 
 variable "env" {

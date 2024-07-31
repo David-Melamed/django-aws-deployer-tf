@@ -6,3 +6,6 @@ data "aws_instances" "beanstalk_instances" {
   }
 }
 
+output "ec2_public_ips" {
+  value = data.aws_instances.beanstalk_instances[*].public_ips
+}

@@ -17,9 +17,12 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /code
 
-# Copy the Django project files
-COPY . /code/
+# Copy the requirements file and install dependencies
+COPY requirements.txt /code/
 RUN pip install --upgrade pip && pip install -r requirements.txt && pip install mysqlclient
+
+# Copy the rest of the Django project files
+COPY . /code/
 
 # List the contents of /code to verify
 RUN ls -la /code

@@ -47,7 +47,3 @@ output "environment_name" {
 output "django_project_name" {
   value = local.django_project_name
 }
-
-output "ec2_public_ips" {
-  value = data.aws_instances.beanstalk_instances[*].public_ips
-}
